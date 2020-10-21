@@ -2,3 +2,5 @@ crispr/*
 skin-analysis/*
 tmp/*
 Notebooks/*
+.*
+!/.gitignore
