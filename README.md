@@ -3,6 +3,7 @@
 Run `pip install -r requirements.txt` to setup the env.
 
 `CRISPR-RNA-Editing Model Training and Evaluation.ipynb` houses all of the code for generating temp files, training models, and evaluating models.
+`RNA-Edit-Modelling-Using-Structure-Data.ipynb` has the code for creating models that also use structure data.
 
 Be sure to change the data directory in the notebook to point to your data folder with all of the fasta files. 
 
