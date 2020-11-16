@@ -3,4 +3,5 @@ skin-analysis/*
 tmp/*
 Notebooks/*
 .*
+data/*
 !/.gitignore
