@@ -4,3 +4,4 @@ tmp/*
 Notebooks/*
 .*
 !/.gitignore
+data/*
