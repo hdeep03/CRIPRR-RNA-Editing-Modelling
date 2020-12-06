@@ -27,7 +27,11 @@ def main(fasta_path, output_path):
     print(fasta_path)
     seq = list()
     metadata = list()
-    with open(fasta_path,'rt') as f:
+    if fasta_path.endswith('.gz'):
+        opener = gzip.open
+    else:
+        opener = open
+    with opener(fasta_path,'rt') as f:
         for line in tqdm(f):
             if line[0:1] == ">":
                 y = line[1:].strip().encode("utf-8")
