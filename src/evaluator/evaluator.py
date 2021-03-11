@@ -1,9 +1,11 @@
 import os
 from src.utils.helper import predict_on_generator
+from src.data_loader.RNASeqLoader import RNASeqDataGenerator
 from scipy.stats import spearmanr, pearsonr
 from scipy.stats.kde import gaussian_kde
 from matplotlib import colors
 import matplotlib.pyplot as plt
+import tensorflow as tf
 import numpy as np
 
 class Evaluator():
@@ -38,4 +40,11 @@ class Evaluator():
         plt.ylim(0,1)
         plt.pcolormesh(xi, yi, zi.reshape(xi.shape),cmap=plt.cm.inferno, norm=colors.LogNorm(vmin=1e-2), snap=False)
         plt.show()
-        
+if __name__ == "__main__":
+    os. chdir("/home/harsh")
+    model_path = sys.argv[1]
+    data_path = sys.argv[2]
+    data_loader = RNASeqDataGenerator(data_path, 1024)
+    model = tf.keras.models.load_model(model_path)
+    e = Evaluator(model, data_loader)
+    e.evaluate()

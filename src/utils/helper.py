@@ -8,7 +8,7 @@ def predict_on_generator(model, generator):
     pbar = tqdm(total=len(generator))
     for i in range(len(generator)):
         pbar.update(1)
-        x, y = generator[i]
+        x, y, _ = generator[i]
         p = model.predict(x, batch_size=x.shape[0], use_multiprocessing=True, workers=20)
         preds.append(p)
         labels.append(y)

@@ -8,6 +8,6 @@ import sys
 if __name__=="__main__":
     rnadata=None
     with h5py.File(sys.argv[2], "r") as hf:
-        rnadata=hf['RNAdata'][()]
+        rnadata=hf['structures'][()]
     with h5py.File(sys.argv[1], "a") as hf:
         hf.create_dataset("structure", data=rnadata)

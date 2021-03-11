@@ -1,6 +1,7 @@
 import os
 import h5py
 import numpy as np
+import math
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from tensorflow import keras
 from keras.utils import Sequence
@@ -20,10 +21,11 @@ def getEditData(line):
 
 class RNASeqDataGenerator(keras.utils.Sequence):
     
-    def __init__(self, h5_filepath, batch_size, reverse=True, n_around_center=50):
+    def __init__(self, h5_filepath, batch_size, reverse=True, n_around_center=50, sqrt_edits=False):
         self.file_name = h5_filepath
         self.batch_size = batch_size
         self.reverse = reverse
+        self.log_edit = sqrt_edits
         with h5py.File(self.file_name, "r") as f:
             self.elements = f['sequences'].shape[0]
             self.dim = 2*n_around_center+1
@@ -47,14 +49,22 @@ class RNASeqDataGenerator(keras.utils.Sequence):
         # Initialization
         X = np.empty((self.batch_size, self.dim, self.n_channels))
         y = np.empty((self.batch_size))
+        weights = np.empty((self.batch_size))
         if self.reverse:
             X = np.empty((2*self.batch_size, self.dim, self.n_channels))
-            y = np.empty((2*self.batch_size))      
+            y = np.empty((2*self.batch_size))  
+            weights = np.empty((2*self.batch_size))
         with h5py.File(self.file_name, "r") as f: 
             for i, ID in enumerate(list_IDs_temp):
                 X[i,] = seq_to_onehot(f['sequences'][ID].decode("utf-8")[self.f_idx:self.e_idx])
-                y[i] = getEditData(f['metadata'][ID])
+                y_val = getEditData(f['metadata'][ID])
+                weights[i] = 1.0
+                if self.log_edit:
+                    y[i] =  math.sqrt(y_val)
+                else:
+                    y[i] = y_val
                 if self.reverse:
                     X[self.batch_size+i,] = np.flipud(X[i])
                     y[self.batch_size+i] = y[i]
-        return X, y
+                    weights[self.batch_size+i] = weights[i]
+        return X, y, weights

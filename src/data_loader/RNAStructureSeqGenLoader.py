@@ -60,6 +60,7 @@ class RNASeqStructDataGenerator(keras.utils.Sequence):
             self.e_idx = len(f['sequences'][0]) // 2 + n_around_center + 1
             self.n_channels = 4
         self.indexes = np.arange(self.elements)
+        self.h5File = h5py.File(self.file_name, "r")
         
     def __len__(self):
         return self.elements // self.batch_size
@@ -77,12 +78,12 @@ class RNASeqStructDataGenerator(keras.utils.Sequence):
         X = np.empty((self.batch_size, self.dim, self.n_channels))
         y = np.empty((self.batch_size))  
         seq = list()
-        with h5py.File(self.file_name, "r") as f: 
+        with self.h5File as f: 
             for i, ID in enumerate(list_IDs_temp):
                 X[i,] = seq_to_onehot(f['sequences'][ID].decode("utf-8")[self.f_idx:self.e_idx])
                 seq.append(f['sequences'][ID].decode("utf-8")[self.f_idx:self.e_idx].strip())
                 y[i] = getEditData(f['metadata'][ID])
-        #rna_structure_data = getBatchStructureData(seq)[:,self.f_idx:self.e_idx, :]
+
         rna_structure_data = getBatchStructureData(seq)
         X = np.concatenate((X, rna_structure_data), axis=2)
         return X, y
